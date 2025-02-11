@@ -12,7 +12,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 if platform.system() == 'Darwin':
-    if platform.processor() == 'arm':
+    if platform.processor().startswith('arm'):
         include_dirs = [
             '/opt/homebrew/include/osrm',
             '/opt/homebrew/include/boost',
