@@ -4,6 +4,11 @@ import platform
 from ctypes.util import find_library
 import os
 import sys
+import glob
+
+sources = glob.glob("**/*.pyx", recursive=True)
+if not sources:
+    raise ValueError("No .pyx files found using the pattern '**/*.pyx'")
 
 # read the contents of your README file
 from os import path
@@ -12,11 +17,12 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 if platform.system() == 'Darwin':
-    if platform.processor().startswith('arm'):
+    if platform.processor() == 'arm':
         include_dirs = [
+            '/opt/homebrew/include',
             '/opt/homebrew/include/osrm',
-            '/opt/homebrew/include/boost',
-            '/usr/local/include/boost',
+            '/usr/local/include',
+            '/usr/local/include/osrm'
         ]
         library_dirs = [
             '/opt/homebrew/lib',
@@ -24,8 +30,8 @@ if platform.system() == 'Darwin':
         ]       
     else:        
         include_dirs = [
+            '/usr/local/include',
             '/usr/local/include/osrm',
-            '/usr/local/include/boost',
         ]
         library_dirs = [
             '/usr/local/lib',
@@ -108,7 +114,7 @@ ext = cythonize(
     [
         Extension(
             'pyosrm',
-            sources=['**/*.pyx'],
+            sources=sources,
             include_dirs=include_dirs,
             library_dirs=library_dirs,
             libraries=libraries,

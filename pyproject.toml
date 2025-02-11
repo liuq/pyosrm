@@ -8,7 +8,7 @@ url = "https://github.com/liuq/pyosrm"
 readme = "README.md"
 
 [build-system]
-requires = ["setuptools", "wheel", "Cython"]
+requires = ["setuptools>=61", "wheel", "Cython"]
 
 [tool.pyosrm.build]
 script = "build.py"

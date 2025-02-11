@@ -4,7 +4,7 @@ from libcpp.string cimport string
 from libcpp.unordered_map cimport unordered_map
 from boost cimport path, optional
 
-cdef extern from "storage/storage_config.hpp" namespace "osrm::storage":
+cdef extern from "osrm/storage/storage_config.hpp" namespace "osrm::storage":
     cdef cppclass IOConfig:
         IOConfig (vector[path] required_input_files_,
                   vector[path] optional_input_files_,
@@ -17,7 +17,7 @@ cdef extern from "storage/storage_config.hpp" namespace "osrm::storage":
             StorageConfig(path& base)
             StorageConfig(char* base)
 
-cdef extern from "engine_config.hpp" namespace "osrm":
+cdef extern from "osrm/engine_config.hpp" namespace "osrm":
     ctypedef enum Algorithm:
         CH "osrm::EngineConfig::Algorithm::CH"
         MLD "osrm::EngineConfig::Algorithm::MLD"
@@ -39,26 +39,26 @@ cdef extern from "engine_config.hpp" namespace "osrm":
         string verbosity
         string dataset_name
 
-cdef extern from "status.hpp" namespace "osrm::engine":
+cdef extern from "osrm/status.hpp" namespace "osrm::engine":
     ctypedef enum Status:
         Ok "osrm::engine::Status::Ok"
         Error "osrm::engine::Status::Error"
 
-cdef extern from "bearing.hpp" namespace "osrm":
+cdef extern from "osrm/bearing.hpp" namespace "osrm":
     struct Bearing:
         short bearing
         short range
         bool IsValid()
 
-cdef extern from "approach.hpp" namespace "osrm":
+cdef extern from "osrm/approach.hpp" namespace "osrm":
     cdef cppclass Approach:
         pass
 
-cdef extern from "engine/hint.hpp" namespace "osrm::engine":
+cdef extern from "osrm/engine/hint.hpp" namespace "osrm::engine":
     struct Hint:
         pass
 
-cdef extern from "util/coordinate.hpp" namespace "osrm::util":
+cdef extern from "osrm/util/coordinate.hpp" namespace "osrm::util":
     cdef cppclass FixedLongitude:
         pass
     cdef cppclass FixedLatitude:
@@ -81,7 +81,7 @@ cdef extern from "util/coordinate.hpp" namespace "osrm::util":
         Coordinate(FloatLongitude lon_, FloatLatitude lat_)
         bool IsValid()
 
-cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
+cdef extern from "osrm/engine/api/base_parameters.hpp" namespace "osrm::engine::api":
     cdef cppclass SnappingType:
         pass
         # Default "osrm::engine::api::BaseParameters::SnappingType::Default"
@@ -108,7 +108,7 @@ cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
         bool skip_waypoints
         SnappingType snapping 
 
-cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
+cdef extern from "osrm/route_parameters.hpp" namespace "osrm::engine::api":
     cpdef enum RAnnotationsType "osrm::engine::api::RouteParameters::AnnotationsType":
             RNoAnnotation "osrm::engine::api::RouteParameters::AnnotationsType::None"
             RDuration "osrm::engine::api::RouteParameters::AnnotationsType::Duration"
@@ -137,11 +137,11 @@ cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
         GeometriesType geometries
         OverviewType overview
 
-cdef extern from "nearest_parameters.hpp" namespace "osrm::engine::api": 
+cdef extern from "osrm/nearest_parameters.hpp" namespace "osrm::engine::api": 
     cdef cppclass NearestParameters(BaseParameters):    
         unsigned int number_of_results
 
-cdef extern from "table_parameters.hpp" namespace "osrm::engine::api":
+cdef extern from "osrm/table_parameters.hpp" namespace "osrm::engine::api":
     cpdef enum TAnnotationsType "osrm::engine::api::TableParameters::AnnotationsType":
             TNoAnnotation "osrm::engine::api::TableParameters::AnnotationsType::None"
             TDuration "osrm::engine::api::TableParameters::AnnotationsType::Duration"
@@ -160,7 +160,7 @@ cdef extern from "table_parameters.hpp" namespace "osrm::engine::api":
         TAnnotationsType annotations
         double scale_factor
 
-cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
+cdef extern from "osrm/util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:
         T get[T]()
     cdef cppclass _JsonObject "osrm::util::json::Object":
@@ -173,12 +173,12 @@ cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     struct _String "osrm::util::json::String":
         string value
 
-cdef extern from "engine/api/base_result.hpp" namespace "osrm::engine::api":
+cdef extern from "osrm/engine/api/base_result.hpp" namespace "osrm::engine::api":
     cdef cppclass ResultT:
         ResultT(_JsonObject value)
         T get[T]()
 
-cdef extern from "osrm.hpp" namespace "osrm":
+cdef extern from "osrm/osrm.hpp" namespace "osrm":
     cdef cppclass OSRM:
         OSRM() except +
         OSRM(EngineConfig &config) except +

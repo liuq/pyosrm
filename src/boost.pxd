@@ -1,9 +1,9 @@
 from libcpp.vector cimport vector
 
-cdef extern from "filesystem.hpp" namespace "boost::filesystem":
+cdef extern from "boost/filesystem.hpp" namespace "boost::filesystem":
     cdef cppclass path:
         pass
 
-cdef extern from "optional.hpp" namespace "boost::optional_ns":
+cdef extern from "boost/optional.hpp" namespace "boost::optional_ns":
     cdef cppclass optional[T]:
         pass
