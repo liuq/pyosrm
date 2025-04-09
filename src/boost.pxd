@@ -1,3 +1,5 @@
+# distutils: language = c++
+
 from libcpp.vector cimport vector
 
 cdef extern from "boost/filesystem.hpp" namespace "boost::filesystem":

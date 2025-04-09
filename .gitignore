@@ -1,5 +1,9 @@
 *.pyc
 *.egg-info
-src/pyosrm/*.cpp
+src/**/*.cpp
 *.so
 build/*
+dist/*
+__pycache__
+.pytest_cache
+.DS_Store

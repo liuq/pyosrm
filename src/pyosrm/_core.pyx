@@ -1,8 +1,16 @@
+# distutils: language = c++
+
 cimport osrm
 from enum import Enum
 import os
 from collections.abc import Iterable
 import datetime as dt
+
+from enum import IntEnum
+
+class Status(IntEnum):
+    Ok = osrm.Status.Ok
+    Error = osrm.Status.Error
 
 cdef class PyOSRM:
     cdef:

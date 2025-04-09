@@ -1,126 +1,23 @@
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension
 from Cython.Build import cythonize
-import platform
-from ctypes.util import find_library
-import os
-import sys
-import glob
+from scripts.config import config as _config
 
-sources = glob.glob("**/*.pyx", recursive=True)
-if not sources:
-    raise ValueError("No .pyx files found using the pattern '**/*.pyx'")
-
-# read the contents of your README file
-from os import path
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+with open('README.md') as f:
     long_description = f.read()
 
-if platform.system() == 'Darwin':
-    if platform.processor() == 'arm':
-        include_dirs = [
-            '/opt/homebrew/include',
-            '/opt/homebrew/include/osrm',
-            '/usr/local/include',
-            '/usr/local/include/osrm'
-        ]
-        library_dirs = [
-            '/opt/homebrew/lib',
-            '/usr/local/lib',
-        ]       
-    else:        
-        include_dirs = [
-            '/usr/local/include',
-            '/usr/local/include/osrm',
-        ]
-        library_dirs = [
-            '/usr/local/lib',
-            '/usr/lib',
-        ]
-
-    libraries = [
-        "boost_system",
-        "boost_filesystem",
-        "boost_iostreams",
-        "boost_thread",
-        "osrm"
-    ]
-    os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = ":".join(library_dirs)
-    for i, library in enumerate(libraries):
-        # Try dynamic libraries first
-        if find_library(library):
-            continue
-        if library.startswith('boost') and not find_library(library) and find_library(library + '-mt'):
-            # Try with the multithreading version
-            library += '-mt'
-            libraries[i] = library
-            continue
-        # fallback to static library
-        found = False
-        for dir in library_dirs:
-            if os.path.isfile(os.path.join(dir, f'lib{library}.a')):
-                found = True
-                break
-            if library.startswith('boost') and os.path.isfile(os.path.join(dir, f'lib{library}-mt.a')):
-                library += '-mt'
-                libraries[i] = library
-                found = True
-                break
-        if found:
-            continue
-        raise SystemExit(f'Could not locate library {library}')    
-    extra_link_args = []
-elif platform.system() == 'Linux':
-    include_dirs = [
-        '/usr/local/include/osrm',
-        '/usr/include/boost',
-        '/usr/local/include/boost'
-    ]
-    library_dirs = [ '/usr/local/lib', '/usr/lib/x86_64-linux-gnu' ]
-    libraries = [
-        "osrm",
-        "boost_system",
-        "boost_filesystem",
-        "boost_iostreams",
-        "boost_thread",
-        'rt',
-        f'boost_python{"".join(map(str, sys.version_info[:2]))}',
-        f'python{".".join(map(str, sys.version_info[:2]))}'
-    ]
-    extra_link_args = ["-Wl,--no-undefined"]
-    for i, library in enumerate(libraries):
-        # Try dynamic libraries first
-        found = False
-        if find_library(library):            
-            found = True
-        else:
-            for dir in library_dirs:
-                if os.path.isfile(os.path.join(dir, f'lib{library}.a')):
-                    found = True
-                    break
-                if library.startswith('boost') and os.path.isfile(os.path.join(dir, f'lib{library}-mt.a')):
-                    library += '-mt'
-                    libraries[i] = library
-                    found = True
-                    break
-        if found:
-            continue
-        else:
-            raise SystemExit(f'Could not locate library {library}')
-else:
-    raise SystemExit(f'Platform {platform.system()} is currently unsupported')
+config = _config()
 
 ext = cythonize(
     [
         Extension(
-            'pyosrm',
-            sources=sources,
-            include_dirs=include_dirs,
-            library_dirs=library_dirs,
-            libraries=libraries,
+            '*',
+            sources=config['sources'],
+            include_dirs=config['include_dirs'],
+            library_dirs=config['library_dirs'],
+            libraries=config['libraries'],
             language='c++',
             extra_compile_args=["-std=c++17"],
-            extra_link_args=extra_link_args
+            extra_link_args=config['extra_link_args']
         )
     ],
     compiler_directives={
@@ -138,5 +35,11 @@ setup(
     author='Enrico Davini, Luca Di Gaspero',
     url='https://github.com/liuq/pyosrm',
     zip_safe=False,
-    ext_modules=ext
+    ext_modules=ext,
+    include_package_data=True,
+    package_data={'pyosrm': ['*.so', '*.pyd', '*.dylib']}, 
+    install_requires=[],
+    extras_require={
+        'dev': ['pytest']
+    }
 )
